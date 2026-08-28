@@ -26,10 +26,14 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: node:latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Branch
         uses: actions/checkout@v3
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: false
       - name: Compile The Glorious Code
         run: |
           yarn && yarn build
