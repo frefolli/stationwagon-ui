@@ -33,7 +33,7 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 24
-          cache: false
+          cache: 'yarn'
       - name: Compile The Glorious Code
         run: |
           yarn && yarn build
