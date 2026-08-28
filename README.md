@@ -1,6 +1,6 @@
 # Getting Started with Stationwagon
 
-Preview in [The Glorious Pages](https://github.com/frefolli/stationwagon)
+Preview in [The Glorious Pages](https://frefolli.github.io/stationwagon-ui/)
 
 ## Download and Run Stationwagon frontend UI
 
