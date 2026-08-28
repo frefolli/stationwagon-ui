@@ -5,10 +5,11 @@ import {
 	Marker,
 	Popup,
 	TileLayer,
+  useMap
 } from "react-leaflet";
 import { Typography } from "@mui/material";
 import L from "leaflet";
-import { City, Station } from "../types";
+import { City, StationEx } from "../types";
 
 const redIcon = new L.Icon({
 	iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
@@ -28,12 +29,15 @@ const blueIcon = new L.Icon({
 	shadowSize: [41, 41],
 });
 
-function StationPopup(params: { station: Station }) {
+function StationPopup(params: { station: StationEx }) {
 	return (
 		<Popup>
 			<Flex columns="100%" gap="5px">
-				<Typography variant="subtitle2" data-testid="eventTitle">
-					{params.station.name}
+				<Typography variant="subtitle2" data-testid="stationLabel">
+					{params.station.station.label}
+				</Typography>
+				<Typography variant="subtitle2" data-testid="stationDistance">
+					{`${params.station.distance} km`}
 				</Typography>
 			</Flex>
 		</Popup>
@@ -41,11 +45,13 @@ function StationPopup(params: { station: Station }) {
 }
 
 function CityPopup(params: { city: City }) {
+  const leMap = useMap();
+  leMap.setView({lat: params.city.latitude, lng: params.city.longitude}, 11);
 	return (
 		<Popup>
 			<Flex columns="100%" gap="5px">
-				<Typography variant="subtitle2" data-testid="eventTitle">
-					{params.city.name}
+				<Typography variant="subtitle2" data-testid="cityLabel">
+					{params.city.label}
 				</Typography>
 			</Flex>
 		</Popup>
@@ -53,21 +59,29 @@ function CityPopup(params: { city: City }) {
 }
 
 export interface CityStationMapProps {
-	dim?: number;
 	blockScrolling?: boolean;
 	city?: City;
-	stations?: Station[];
+  zoom?: number;
+	stations?: StationEx[];
 }
 
 export default function CityStationMap(props: CityStationMapProps) {
-	const width = innerWidth < 1000 ? "300px" : props.dim || "1500px";
-	const height = innerWidth < 1000 ? "300px" : props.dim || "500px";
+	const width = innerWidth < 1000 ? "300px" : "1500px";
+	const height = innerWidth < 1000 ? "300px" : "750px";
+
+  const getZoom = (zoom?: number): number => {
+    if (zoom === undefined)
+      return 9;
+    return zoom;
+  }
 
   const getCityPos = (city?: City) => {
     if (city == undefined) {
       return { lat: 45, lng: 9.01 };
     }
-    return { lat: city.latitude, lng: city.longitude };
+    let result = { lat: city.latitude, lng: city.longitude };
+    console.log(result);
+    return result;
   };
 
 	return (
@@ -82,7 +96,7 @@ export default function CityStationMap(props: CityStationMapProps) {
 				<MapContainer
 					preferCanvas={true}
 					center={getCityPos(props.city)}
-					zoom={9}
+					zoom={getZoom(props.zoom)}
 					scrollWheelZoom={!props.blockScrolling}
 					style={{ height: height, width: width }}
 				>
@@ -92,7 +106,7 @@ export default function CityStationMap(props: CityStationMapProps) {
 						<Marker
              icon={redIcon}
 							key={index}
-							position={[station.latitude, station.longitude]}
+							position={[station.station.latitude, station.station.longitude]}
 							eventHandlers={{
 								click: (x) => {
 									x.originalEvent.stopPropagation();
