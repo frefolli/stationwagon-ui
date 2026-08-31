@@ -65,9 +65,32 @@ export interface CityStationMapProps {
 	stations?: StationEx[];
 }
 
+function computeWidth(): string {
+  let referWidth = document.body.clientWidth;
+
+  let size: number = 300;
+  if (referWidth > 1000) {
+    size = 1500;
+  } else if (referWidth > size) {
+    size = referWidth;
+  }
+
+  return `${size}px`;
+}
+
+function computeHeight(): string {
+  let referHeight = innerHeight;
+  let size: number = 300;
+  if (referHeight > size) {
+    size = referHeight;
+  }
+
+  return `${size}px`;
+}
+
 export default function CityStationMap(props: CityStationMapProps) {
-	const width = innerWidth < 1000 ? "300px" : "1500px";
-	const height = innerWidth < 1000 ? "300px" : "750px";
+  const width  = computeWidth();
+  const height = computeHeight();
 
   const getZoom = (zoom?: number): number => {
     if (zoom === undefined)
